@@ -196,7 +196,7 @@ class Patch {
 		static $patchCommand = null;
 		if (!$patchCommand) {
 			$exitCode = $output = null;
-			$patchCommand = exec('which patch', $output, $exitCode);
+			$patchCommand = exec("{$this->getOsWhichCmd()} patch", $output, $exitCode);
 			if (0 !== $exitCode || !is_executable($patchCommand)) {
 				throw new Exception("Cannot find the 'patch' executable command - use your o/s package manager like 'sudo yum install patch'");
 			}
@@ -206,7 +206,7 @@ class Patch {
 
 	/**
 	 * Run the patch command
-	 * 
+	 *
 	 * @param string $toPath
 	 * @param boolean $revert
 	 * @param boolean $dryRun
@@ -340,4 +340,13 @@ class Patch {
 
 		return TRUE;
 	}
+
+    /**
+     * Return the correct command to find the executable based on the OS.
+     *
+     * @return string
+     */
+    private function getOsWhichCmd() {
+      return substr(PHP_OS, 0, 3) === 'WIN' ? 'where' : 'which';
+    }
 }
